@@ -87,7 +87,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#dcc9a6] p-2 md:p-5 font-serif text-[#3e342a]">
-      <div className="max-w-6xl mx-auto border-4 border-double border-[#8b7355] bg-[#f4e9d2] shadow-2xl overflow-hidden">
+      <div className="max-w-5xl mx-auto border-4 border-double border-[#8b7355] bg-[#f4e9d2] shadow-2xl overflow-hidden">
 
         {/* HEADER */}
         <header className="flex flex-col md:flex-row items-center justify-between border-b-2 border-[#8b7355] p-6 bg-[#efe2c9]">
@@ -117,9 +117,9 @@ export default function Home() {
               </button>
             )}
 
-            <button className="flex items-center gap-2 px-4 py-1 border border-[#8b7355] rounded-sm hover:bg-[#e8dcc4]">
+            {/* <button className="flex items-center gap-2 px-4 py-1 border border-[#8b7355] rounded-sm hover:bg-[#e8dcc4]">
               <RefreshCcw size={16} /> Switch Pages
-            </button>
+            </button> */}
 
             <button
               onClick={isEditing ? handlePost : startNewEntry}
