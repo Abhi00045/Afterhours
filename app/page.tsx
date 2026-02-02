@@ -5,11 +5,11 @@ import {
   Plus,
   Send,
   Calendar as CalIcon,
-  RefreshCcw,
   User,
   LogOut,
 } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
+import Calendar from "@/Components/Calender";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -22,18 +22,15 @@ export default function Home() {
   );
   const [entries, setEntries] = useState<Record<string, string>>({});
 
-  /* ---------------- CLIENT MOUNT ---------------- */
-
+  /* ---------------- MOUNT ---------------- */
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  /* ---------------- AUTH STATE ---------------- */
-
+  /* ---------------- AUTH ---------------- */
   useEffect(() => {
     if (!mounted) return;
 
-    // Get session safely (NO /auth/v1/user spam)
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
     });
@@ -49,52 +46,92 @@ export default function Home() {
     };
   }, [mounted]);
 
+  /* ---------------- FETCH USER ENTRIES ---------------- */
+  useEffect(() => {
+    if (!user) {
+      setEntries({});
+      return;
+    }
+
+    const fetchEntries = async () => {
+      const { data, error } = await supabase
+        .from("journal_entries")
+        .select("entry_date, content")
+        .eq("user_id", user.id);
+
+      if (!error && data) {
+        const map: Record<string, string> = {};
+        data.forEach((e) => {
+          map[e.entry_date] = e.content;
+        });
+        setEntries(map);
+      }
+    };
+
+    fetchEntries();
+  }, [user]);
+
   /* ---------------- AUTH ACTIONS ---------------- */
-
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
     });
-
-    if (error) console.error("Login error:", error.message);
   };
 
   const handleLogout = async () => {
-    // 🔑 IMPORTANT: update UI immediately
-    setUser(null);
     await supabase.auth.signOut();
-  };
-
-  /* ---------------- JOURNAL LOGIC ---------------- */
-
-  const startNewEntry = () => {
-    setIsEditing(true);
-    setContent(entries[selectedDate] || "");
-  };
-
-  const handlePost = () => {
-    setEntries((prev) => ({
-      ...prev,
-      [selectedDate]: content,
-    }));
+    setUser(null);
     setIsEditing(false);
     setContent("");
   };
 
-  /* ---------------- HYDRATION GUARD ---------------- */
+  /* ---------------- JOURNAL ---------------- */
+  const startNewEntry = () => {
+    if (!user) {
+      handleLogin(); // 🔥 force login if not logged in
+      return;
+    }
+    setIsEditing(true);
+    setContent(entries[selectedDate] || "");
+  };
+
+  const handlePost = async () => {
+    if (!user) {
+      handleLogin();
+      return;
+    }
+
+    const { error } = await supabase
+      .from("journal_entries")
+      .upsert({
+        user_id: user.id,
+        entry_date: selectedDate,
+        content,
+      });
+
+    if (!error) {
+      setEntries((prev) => ({
+        ...prev,
+        [selectedDate]: content,
+      }));
+      setIsEditing(false);
+      setContent("");
+    }
+  };
 
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#dcc9a6] p-2 md:p-5 font-serif text-[#3e342a]">
-      <div className="max-w-5xl mx-auto border-4 border-double border-[#8b7355] bg-[#f4e9d2] shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-[#dcc9a6] p-3 md:p-6 font-serif text-[#3e342a]">
+      <div className="max-w-5xl mx-auto border-4 border-double border-[#8b7355] bg-[#f4e9d2] shadow-2xl">
 
         {/* HEADER */}
-        <header className="flex flex-col md:flex-row items-center justify-between border-b-2 border-[#8b7355] p-6 bg-[#efe2c9]">
+        <header className="flex flex-col md:flex-row gap-4 items-center justify-between border-b-2 border-[#8b7355] p-6 bg-[#efe2c9]">
           <div>
-            <h1 className="text-4xl font-black uppercase tracking-tighter">
-              After Hours
-            </h1>
+            <h1 className="text-4xl font-black uppercase">After Hours</h1>
             <p className="text-sm italic">A journal</p>
           </div>
 
@@ -110,37 +147,26 @@ export default function Home() {
             ) : (
               <button
                 onClick={handleLogin}
-                className="p-2 border border-[#8b7355] rounded-full hover:bg-[#e8dcc4]"
+                className="p-2 border border-black rounded-full hover:bg-[#e8dcc4]"
                 title="Login"
               >
                 <User size={18} />
               </button>
             )}
 
-            {/* <button className="flex items-center gap-2 px-4 py-1 border border-[#8b7355] rounded-sm hover:bg-[#e8dcc4]">
-              <RefreshCcw size={16} /> Switch Pages
-            </button> */}
-
             <button
               onClick={isEditing ? handlePost : startNewEntry}
               className="flex items-center gap-2 px-6 py-2 bg-[#3e342a] text-[#f4e9d2] font-bold"
             >
-              {isEditing ? (
-                <>
-                  <Send size={18} /> POST
-                </>
-              ) : (
-                <>
-                  <Plus size={18} /> ADD
-                </>
-              )}
+              {isEditing ? <Send size={18} /> : <Plus size={18} />}
+              {isEditing ? "POST" : "ADD"}
             </button>
           </div>
         </header>
 
         <div className="flex flex-col md:flex-row min-h-[600px]">
           {/* LEFT */}
-          <section className="flex-1 p-8 border-r-2 border-[#8b7355]">
+          <section className="flex-1 p-6 border-r-2 border-[#8b7355]">
             {isEditing ? (
               <textarea
                 autoFocus
@@ -157,31 +183,14 @@ export default function Home() {
 
           {/* RIGHT */}
           <section className="w-full md:w-1/3 bg-[#e8dcc4] p-6">
-            <h3 className="flex items-center gap-2 text-xs font-bold uppercase mb-6">
-              <CalIcon size={14} /> Calendar
-            </h3>
-
-            <div className="grid grid-cols-7 gap-1">
-              {Array.from({ length: 31 }, (_, i) => {
-                const day = i + 1;
-                const dateStr = `2026-01-${day
-                  .toString()
-                  .padStart(2, "0")}`;
-
-                return (
-                  <button
-                    key={day}
-                    onClick={() => {
-                      setSelectedDate(dateStr);
-                      setIsEditing(false);
-                    }}
-                    className="h-10 text-xs hover:border border-[#8b7355]"
-                  >
-                    {day}
-                  </button>
-                );
-              })}
-            </div>
+           <Calendar
+  entriesDates={Object.keys(entries)}
+  selectedDate={selectedDate}
+  onDateSelect={(date) => {
+    setSelectedDate(date);
+    setIsEditing(false);
+  }}
+/>
           </section>
         </div>
       </div>
