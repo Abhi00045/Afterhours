@@ -1,4 +1,4 @@
-# AfterHours - Personal Journal Application
+﻿# AfterHours - Personal Journal Application
 
 A production-ready personal journal web application with vintage paper aesthetics, OAuth authentication, and real-time database synchronization.
 
@@ -51,15 +51,15 @@ Follow the detailed setup instructions in `SUPABASE_SETUP.md`:
 2. Run the SQL schema from `supabase/schema.sql` in the SQL Editor
 3. Configure Google OAuth provider in Authentication settings
 4. Configure Twitter OAuth provider in Authentication settings
-5. Get your Project URL and anon key from Settings → API
+5. Get your Project URL and anon key from Settings â†’ API
 
 ### 3. Environment Variables
 
 Create a `.env` file in the root directory:
 
 ```bash
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 Replace with your actual Supabase credentials.
@@ -68,35 +68,35 @@ Replace with your actual Supabase credentials.
 
 ```
 afterhours/
-├── src/
-│   ├── components/
-│   │   ├── journal/
-│   │   │   ├── Calendar.jsx          # Interactive calendar with date highlighting
-│   │   │   ├── JournalEditor.jsx     # Entry creation/editing form
-│   │   │   ├── JournalViewer.jsx     # Entry display component
-│   │   │   └── RecentEntries.jsx     # Recent entries sidebar
-│   │   └── ui/
-│   │       ├── Button.jsx            # Reusable button component
-│   │       └── LoadingSpinner.jsx    # Loading indicators
-│   ├── contexts/
-│   │   └── AuthContext.jsx           # Authentication state management
-│   ├── lib/
-│   │   ├── auth.js                   # Auth helper functions
-│   │   ├── journal.js                # Journal CRUD operations
-│   │   └── supabase.js               # Supabase client configuration
-│   ├── pages/
-│   │   ├── Login.jsx                 # OAuth landing page
-│   │   └── Journal.jsx               # Main journal dashboard
-│   ├── App.jsx                       # App router and route protection
-│   ├── main.jsx                      # React entry point
-│   └── index.css                     # Global styles and Tailwind
-├── supabase/
-│   └── schema.sql                    # Database schema and RLS policies
-├── SUPABASE_SETUP.md                 # Detailed Supabase configuration guide
-├── package.json
-├── vite.config.js
-├── tailwind.config.js
-└── README.md
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”œâ”€â”€ journal/
+â”‚   â”‚   â”‚   â”œâ”€â”€ Calendar.jsx          # Interactive calendar with date highlighting
+â”‚   â”‚   â”‚   â”œâ”€â”€ JournalEditor.jsx     # Entry creation/editing form
+â”‚   â”‚   â”‚   â”œâ”€â”€ JournalViewer.jsx     # Entry display component
+â”‚   â”‚   â”‚   â””â”€â”€ RecentEntries.jsx     # Recent entries sidebar
+â”‚   â”‚   â””â”€â”€ ui/
+â”‚   â”‚       â”œâ”€â”€ Button.jsx            # Reusable button component
+â”‚   â”‚       â””â”€â”€ LoadingSpinner.jsx    # Loading indicators
+â”‚   â”œâ”€â”€ contexts/
+â”‚   â”‚   â””â”€â”€ AuthContext.jsx           # Authentication state management
+â”‚   â”œâ”€â”€ lib/
+â”‚   â”‚   â”œâ”€â”€ auth.js                   # Auth helper functions
+â”‚   â”‚   â”œâ”€â”€ journal.js                # Journal CRUD operations
+â”‚   â”‚   â””â”€â”€ supabase.js               # Supabase client configuration
+â”‚   â”œâ”€â”€ pages/
+â”‚   â”‚   â”œâ”€â”€ Login.jsx                 # OAuth landing page
+â”‚   â”‚   â””â”€â”€ Journal.jsx               # Main journal dashboard
+â”‚   â”œâ”€â”€ App.jsx                       # App router and route protection
+â”‚   â”œâ”€â”€ main.jsx                      # React entry point
+â”‚   â””â”€â”€ index.css                     # Global styles and Tailwind
+â”œâ”€â”€ supabase/
+â”‚   â””â”€â”€ schema.sql                    # Database schema and RLS policies
+â”œâ”€â”€ SUPABASE_SETUP.md                 # Detailed Supabase configuration guide
+â”œâ”€â”€ package.json
+â”œâ”€â”€ vite.config.js
+â”œâ”€â”€ tailwind.config.js
+â””â”€â”€ README.md
 ```
 
 ## Key Features Explained
@@ -178,7 +178,7 @@ See `supabase/schema.sql` for complete schema and RLS policies.
 
 1. Ensure `.env` file exists in root directory
 2. Restart dev server after changing environment variables
-3. Variables must be prefixed with `VITE_`
+3. Variables must be prefixed with `NEXT_PUBLIC_`
 
 ## License
 

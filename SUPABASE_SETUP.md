@@ -1,4 +1,4 @@
-# Supabase Setup Instructions for AfterHours
+﻿# Supabase Setup Instructions for AfterHours
 
 ## 1. Create Supabase Project
 
@@ -26,7 +26,7 @@ This will create:
 
 ### Google OAuth Setup
 
-1. In Supabase dashboard, go to **Authentication** → **Providers**
+1. In Supabase dashboard, go to **Authentication** â†’ **Providers**
 2. Find **Google** in the list and click to expand
 3. Toggle "Enable Sign in with Google"
 4. You need to create Google OAuth credentials:
@@ -34,8 +34,8 @@ This will create:
    **Create Google OAuth App:**
    - Go to [Google Cloud Console](https://console.cloud.google.com/)
    - Create a new project or select existing
-   - Go to "APIs & Services" → "Credentials"
-   - Click "Create Credentials" → "OAuth client ID"
+   - Go to "APIs & Services" â†’ "Credentials"
+   - Click "Create Credentials" â†’ "OAuth client ID"
    - Choose "Web application"
    - Add authorized redirect URIs (get this from Supabase):
      - Copy the "Callback URL" shown in Supabase Google provider settings
@@ -50,7 +50,7 @@ This will create:
 
 ### Twitter OAuth Setup
 
-1. In Supabase dashboard, go to **Authentication** → **Providers**
+1. In Supabase dashboard, go to **Authentication** â†’ **Providers**
 2. Find **Twitter** in the list and click to expand
 3. Toggle "Enable Sign in with Twitter"
 4. You need to create Twitter OAuth credentials:
@@ -75,7 +75,7 @@ This will create:
 
 ## 4. Get Your Supabase Credentials
 
-1. In Supabase dashboard, go to **Settings** → **API**
+1. In Supabase dashboard, go to **Settings** â†’ **API**
 2. Find and copy these values:
    - **Project URL** (looks like `https://xxxxx.supabase.co`)
    - **anon public** key (under "Project API keys")
@@ -86,8 +86,8 @@ This will create:
 2. Add your Supabase credentials:
 
 ```bash
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 Replace `your-project` and `your-anon-key-here` with your actual values from step 4.
@@ -96,9 +96,9 @@ Replace `your-project` and `your-anon-key-here` with your actual values from ste
 
 To verify everything is working:
 
-1. Check that the `journal_entries` table exists in **Database** → **Tables**
-2. Check that RLS policies are enabled in **Database** → **Policies**
-3. Check that Google and Twitter providers are enabled in **Authentication** → **Providers**
+1. Check that the `journal_entries` table exists in **Database** â†’ **Tables**
+2. Check that RLS policies are enabled in **Database** â†’ **Policies**
+3. Check that Google and Twitter providers are enabled in **Authentication** â†’ **Providers**
 4. Your `.env` file has the correct Supabase URL and anon key
 
 ## Notes
