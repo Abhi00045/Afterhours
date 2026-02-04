@@ -4,6 +4,7 @@ export const createEntry = async (userId, entryData) => {
   const { data, error } = await supabase
     .from('journal_entries')
     .insert([
+      //fuck you
       {
         user_id: userId,
         title: entryData.title,
