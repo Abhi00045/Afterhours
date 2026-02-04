@@ -14,7 +14,7 @@ import { RecentEntries, RecentEntriesSkeleton } from "../journal/RecentEntries"
 import { JournalEditor } from "../journal/JournalEditor"
 import { JournalViewer, JournalViewerSkeleton } from "../journal/JournalViewer"
 import { Button } from "../ui/Button"
-import { Plus, LogOut } from "lucide-react"
+import { Plus, LogOut } from "../ui/icons"
 import { format } from "date-fns"
 import type { JournalEntry } from "../../lib/types"
 

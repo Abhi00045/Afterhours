@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import type { FormEvent } from "react"
 import { format } from "date-fns"
-import { Save, Trash2, X } from "lucide-react"
+import { Save, Trash2, X } from "../ui/icons"
 import { Button } from "../ui/Button"
 import type { JournalEntry } from "../../lib/types"
 

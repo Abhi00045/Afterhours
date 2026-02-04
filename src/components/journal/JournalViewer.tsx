@@ -1,5 +1,5 @@
 ﻿import { format } from "date-fns"
-import { Calendar, Clock, Edit2, BookOpen } from "lucide-react"
+import { Calendar, Clock, Edit2, BookOpen } from "../ui/icons"
 import { Button } from "../ui/Button"
 import type { JournalEntry } from "../../lib/types"
 

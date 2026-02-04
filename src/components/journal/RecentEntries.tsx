@@ -1,5 +1,5 @@
 ﻿import { format } from "date-fns"
-import { Clock, ChevronRight } from "lucide-react"
+import { Clock, ChevronRight } from "../ui/icons"
 import type { JournalEntry } from "../../lib/types"
 
 export const RecentEntries = ({
