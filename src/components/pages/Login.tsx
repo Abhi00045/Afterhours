@@ -92,7 +92,7 @@ export const Login = () => {
               >
                 {loading ? "Signing in..." : "Continue with Google"}
               </Button>
-
+{/* 
               <Button
                 onClick={handleTwitterSignIn}
                 disabled={loading}
@@ -109,7 +109,7 @@ export const Login = () => {
                 }
               >
                 {loading ? "Signing in..." : "Continue with Twitter"}
-              </Button>
+              </Button> */}
             </div>
           </div>
 
