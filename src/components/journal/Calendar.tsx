@@ -1,12 +1,10 @@
-﻿"use client"
+"use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   format,
   startOfMonth,
-  endOfMonth,
   startOfWeek,
-  endOfWeek,
   addDays,
   isSameMonth,
   isSameDay,
@@ -14,6 +12,22 @@ import {
   subMonths,
 } from "date-fns"
 import { ChevronLeft, ChevronRight } from "../ui/icons"
+
+const normalizeDateKey = (value: string) => {
+  if (!value) return null
+
+  const dateOnly = value.split("T")[0]
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) {
+    return dateOnly
+  }
+
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return null
+  }
+
+  return format(parsed, "yyyy-MM-dd")
+}
 
 export const Calendar = ({
   entryDates = [],
@@ -25,11 +39,42 @@ export const Calendar = ({
   selectedDate: Date | null
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [hasNavigated, setHasNavigated] = useState(false)
+  const entryDateSet = useMemo(
+    () =>
+      new Set(
+        entryDates
+          .map((date) => normalizeDateKey(date))
+          .filter((date): date is string => Boolean(date))
+      ),
+    [entryDates]
+  )
+  const latestEntryMonth = useMemo(() => {
+    const normalizedDates = entryDates
+      .map((date) => normalizeDateKey(date))
+      .filter((date): date is string => Boolean(date))
+
+    if (normalizedDates.length === 0) {
+      return null
+    }
+
+    const latest = normalizedDates.reduce((max, value) => (value > max ? value : max))
+    return new Date(`${latest}T00:00:00`)
+  }, [entryDates])
+
+  useEffect(() => {
+    if (!hasNavigated && latestEntryMonth) {
+      setCurrentMonth(latestEntryMonth)
+    }
+  }, [hasNavigated, latestEntryMonth])
 
   const renderHeader = () => (
     <div className="flex items-center justify-between mb-4">
       <button
-        onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
+        onClick={() => {
+          setHasNavigated(true)
+          setCurrentMonth(subMonths(currentMonth, 1))
+        }}
         className="p-2 rounded-full hover:bg-vintage-cream transition"
       >
         <ChevronLeft className="w-5 h-5 text-vintage-brown" />
@@ -40,7 +85,10 @@ export const Calendar = ({
       </h3>
 
       <button
-        onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+        onClick={() => {
+          setHasNavigated(true)
+          setCurrentMonth(addMonths(currentMonth, 1))
+        }}
         className="p-2 rounded-full hover:bg-vintage-cream transition"
       >
         <ChevronRight className="w-5 h-5 text-vintage-brown" />
@@ -66,43 +114,65 @@ export const Calendar = ({
 
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth)
-    const monthEnd = endOfMonth(monthStart)
-
-    let startDate = startOfWeek(monthStart)
-    let endDate = endOfWeek(monthEnd)
-
+    const gridStartDate = startOfWeek(monthStart)
+    const today = new Date()
     const totalDays = 42
 
     const rows = []
     let days = []
-    let day = startDate
+    let day = gridStartDate
 
     for (let i = 0; i < totalDays; i++) {
       const formattedDate = format(day, "d")
+      const dateKey = format(day, "yyyy-MM-dd")
       const cloneDay = day
 
-      const isSelected = selectedDate && isSameDay(day, selectedDate)
+      const isSelected = selectedDate ? isSameDay(day, selectedDate) : false
       const isCurrentMonth = isSameMonth(day, monthStart)
-      const isToday = isSameDay(day, new Date())
+      const isToday = isSameDay(day, today)
+      const hasEntry = entryDateSet.has(dateKey)
 
       days.push(
         <div
-          key={day.toString()}
+          key={dateKey}
           onClick={() => isCurrentMonth && onDateSelect(cloneDay)}
           className={`
-            aspect-square flex items-center justify-center rounded-xl
+            aspect-square flex items-center justify-center rounded-xl border relative
             text-sm sm:text-base cursor-pointer select-none transition
 
             ${!isCurrentMonth ? "text-vintage-border" : "text-vintage-ink"}
 
-            ${isSelected ? "bg-vintage-brown text-vintage-paper font-semibold shadow-md scale-105" : ""}
+            ${
+              hasEntry && !isSelected
+                ? "bg-vintage-tan text-vintage-ink border-vintage-brown font-semibold shadow-sm"
+                : "border-transparent"
+            }
 
-            ${!isSelected && isCurrentMonth ? "hover:bg-vintage-paper" : ""}
+            ${
+              isSelected
+                ? "bg-vintage-brown text-vintage-paper border-vintage-brown font-semibold shadow-md scale-105"
+                : ""
+            }
 
-            ${isToday && !isSelected ? "ring-2 ring-vintage-brown" : ""}
+            ${
+              !isSelected && isCurrentMonth
+                ? hasEntry
+                  ? "hover:bg-vintage-tan"
+                  : "hover:bg-vintage-paper"
+                : ""
+            }
+
+            ${
+              isToday && !isSelected
+                ? "ring-2 ring-vintage-brown ring-offset-1 ring-offset-vintage-paper"
+                : ""
+            }
           `}
         >
           {formattedDate}
+          {hasEntry && !isSelected && (
+            <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full bg-vintage-brown" />
+          )}
         </div>
       )
 
